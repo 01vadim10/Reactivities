@@ -2,8 +2,8 @@ import { Formik } from "formik";
 import { observer } from "mobx-react-lite";
 import React from "react";
 import { useState } from "react";
-import { Link } from "react-router-dom";
-import { Button, Form, Grid, Header, Segment, Tab } from "semantic-ui-react";
+import { useHistory } from "react-router-dom";
+import { Button, Form, Grid, Header, Tab } from "semantic-ui-react";
 import MyTextArea from "../../app/common/form/MyTextArea";
 import MyTextInput from "../../app/common/form/MyTextInput";
 import { Profile } from "../../app/models/profile";
@@ -14,13 +14,15 @@ interface Props {
 }
 
 export default observer(function ProfileAbout({ profile }: Props) {
-    const {
-        profileStore: {
-            isCurrentUser
-        },
-    } = useStore();
-
+    const history = useHistory();
+    const {profileStore} = useStore();
+    const {isCurrentUser, updateProfile, loading} = profileStore;
     const [editProfileMode, setEditProfileMode] = useState(false);
+
+    function handleFormSubmit(profile: Profile): any {
+        setEditProfileMode(false);
+        updateProfile(profile).then(() => history.push(`/profiles/${profile.username}`));
+    }
 
     return (
         <Tab.Pane>
@@ -42,16 +44,15 @@ export default observer(function ProfileAbout({ profile }: Props) {
                         enableReinitialize 
                         initialValues={profile} 
                         onSubmit={values => handleFormSubmit(values)}>
-                        {({ handleSubmit, isValid, isSubmitting, dirty }) => (
+                        {({ handleSubmit, isValid, dirty }) => (
                             <Form className='ui form' onSubmit={handleSubmit} autoComplete='off'>
                                 <MyTextInput name='displayName' placeholder='Display Name' />
                                 <MyTextArea rows={3} placeholder='Add your Bio' name='bio' />
                                 <Button 
-                                    disabled={isSubmitting || !dirty || !isValid}
-                                    loading={isSubmitting} floated='right' 
-                                    positive type='submit' content='Submit' 
+                                    disabled={loading || !dirty || !isValid}
+                                    loading={loading} floated='right' 
+                                    positive type='submit' content='Update profile'
                                 />
-                                <Button as={Link} to={`/profiles/${profile.username}`} floated='right' type='button' content='Cancel' />
                             </Form>
                         )}
                     </Formik>) : (
@@ -65,14 +66,5 @@ export default observer(function ProfileAbout({ profile }: Props) {
     );
 });
 
-function handleFormSubmit(profile: Profile): any {
-    // if (!profile.displayName) {
-    //     let newProfile = {
-    //         ...profile,
-    //         id: 
-    //     };
-    //     createprofile(newProfile).then(() => history.push(`/activities/${newProfile.id}`));
-    // } else {
-    //     updateprofile(profile).then(() => history.push(`/activities/${profile.id}`));
-    // }
-}
+
+

@@ -21,6 +21,23 @@ export default class ProfileStore {
         return false;
     }
 
+    updateProfile = async (profile: Profile) => {
+        this.loading = true;
+        try {
+            await agent.Profiles.update(profile);
+            runInAction(() => {
+                if (this.profile) {
+                    this.profile.displayName = profile.displayName;
+                    this.profile.bio = profile.bio;
+                    this.loading = false;
+                }
+            })
+        } catch (error) {
+            runInAction(() => this.loading = false);
+            console.log(error);
+        }
+    }
+
     loadProfile = async (username: string) => {
         this.loadingProfile = true;
         try {

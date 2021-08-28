@@ -14,10 +14,10 @@ namespace API.Controllers
         }
 
         [HttpPut]
-        public async Task<IActionResult> Edit(UserDetails user)
+        public async Task<IActionResult> Edit(UserDetails userDetails)
         {
             return HandleResult(await Mediator.Send(new Edit.Command { 
-                UserDetails = new UserDetails {DisplayName = user.DisplayName, Bio = user.Bio}
+                UserDetails = userDetails
             }));
         }
     }
