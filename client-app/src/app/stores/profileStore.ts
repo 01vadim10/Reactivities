@@ -24,7 +24,7 @@ export default class ProfileStore {
     updateProfile = async (profile: Profile) => {
         this.loading = true;
         try {
-            await agent.Profiles.update(profile);
+            await agent.Profiles.updateProfile(profile);
             runInAction(() => {
                 if (this.profile) {
                     this.profile.displayName = profile.displayName;

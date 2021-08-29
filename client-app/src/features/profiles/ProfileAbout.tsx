@@ -8,6 +8,7 @@ import MyTextArea from "../../app/common/form/MyTextArea";
 import MyTextInput from "../../app/common/form/MyTextInput";
 import { Profile } from "../../app/models/profile";
 import { useStore } from "../../app/stores/store";
+import * as Yup from 'yup';
 
 interface Props {
     profile: Profile
@@ -18,6 +19,10 @@ export default observer(function ProfileAbout({ profile }: Props) {
     const {profileStore} = useStore();
     const {isCurrentUser, updateProfile, loading} = profileStore;
     const [editProfileMode, setEditProfileMode] = useState(false);
+
+    const validationSchema = Yup.object({
+        displayName: Yup.string().required('displayName is a required field'),
+    })
 
     function handleFormSubmit(profile: Profile): any {
         setEditProfileMode(false);
@@ -41,6 +46,7 @@ export default observer(function ProfileAbout({ profile }: Props) {
                 <Grid.Column width={16}>
                     {editProfileMode ? (
                     <Formik 
+                        validationSchema={validationSchema}
                         enableReinitialize 
                         initialValues={profile} 
                         onSubmit={values => handleFormSubmit(values)}>
