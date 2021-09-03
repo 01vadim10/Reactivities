@@ -32,7 +32,8 @@ namespace Application.Followers
                 _mapper = mapper;
             }
 
-            public async Task<Result<List<Profiles.Profile>>> Handle(Query request, CancellationToken cancellationToken)
+            public async Task<Result<List<Profiles.Profile>>> Handle(Query request, 
+                CancellationToken cancellationToken)
             {
                 var profiles = new List<Profiles.Profile>();
 

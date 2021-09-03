@@ -1,6 +1,6 @@
 import { makeAutoObservable, reaction, runInAction } from "mobx";
 import agent from "../api/agent";
-import { Photo, Profile } from "../models/profile";
+import { Photo, Profile, UserActivity } from "../models/profile";
 import { store } from "./store";
 
 export default class ProfileStore {
@@ -9,8 +9,11 @@ export default class ProfileStore {
     uploading = false;
     loading = false;
     followings: Profile[] = [];
+    activities: UserActivity[] = [];
     loadingFollowings = false;
+    loadingActivities = false;
     activeTab = 0;
+    eventActiveTab = 0;
     
     constructor() {
         makeAutoObservable(this);
@@ -21,15 +24,40 @@ export default class ProfileStore {
                 if (activeTab === 3 || activeTab === 4) {
                     const predicate = activeTab === 3 ? 'followers' : 'following';
                     this.loadFollowings(predicate);
+                } else if (activeTab === 2) {
+                    const predicate = 'future';
+                    this.loadUserActivities(this.profile!.username, predicate);
                 } else {
                     this.followings = [];
                 }
+            }
+        )
+        
+        reaction(
+            () => this.eventActiveTab,
+            eventActiveTab => {
+                let predicate = 'future';
+                switch (eventActiveTab) {
+                    case 1:
+                        predicate = 'past';
+                        break;
+                    case 2:
+                        predicate = 'hosting';
+                        break
+                    default:
+                        break;
+                }
+                this.loadUserActivities(this.profile!.username, predicate);
             }
         )
     }
 
     setActiveTab = (activeTab: any) => {
         this.activeTab = activeTab;
+    }
+    
+    setEventActiveTab = (eventActiveTab: any) => {
+        this.eventActiveTab = eventActiveTab;
     }
 
     get isCurrentUser() {
@@ -169,6 +197,20 @@ export default class ProfileStore {
         } catch (error) {
             console.log(error);
             runInAction(() => this.loadingFollowings = false);
+        }
+    }
+    
+    loadUserActivities = async (username: string, predicate?: string) => {
+        this.loadingActivities = true;
+        try {
+            const userActivities = await agent.Profiles.listUserActivities(username, predicate!);
+            runInAction(() => {
+                this.activities = userActivities;
+                this.loadingActivities = false;
+            })
+        } catch (error) {
+            console.log(error);
+            runInAction(() => this.loadingActivities = false);
         }
     }
 }
