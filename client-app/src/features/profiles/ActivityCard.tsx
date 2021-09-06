@@ -1,6 +1,6 @@
 import { observer } from "mobx-react-lite";
 import { Link } from "react-router-dom";
-import { Card, Icon, Image } from "semantic-ui-react";
+import { Card, Image } from "semantic-ui-react";
 import { UserActivity } from "../../app/models/profile";
 
 interface Props {

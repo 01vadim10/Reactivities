@@ -1,5 +1,5 @@
 import { observer } from "mobx-react-lite";
-import { Tab, Grid, CardGroup, Header, Divider } from "semantic-ui-react";
+import { Tab, Grid, CardGroup, Header } from "semantic-ui-react";
 import { useStore } from "../../app/stores/store";
 import ActivityCard from "./ActivityCard";
 
