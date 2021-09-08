@@ -7,7 +7,11 @@ import LoginForm from "../users/LoginForm";
 import RegisterForm from "../users/RegisterForm";
 
 export default observer(function HomePage() {
+    const expStyle = {
+        color: 'teal'
+    };
     const {userStore, modalStore} = useStore();
+
     return (
         <Segment inverted textAlign='center' vertical className='masthead'>
             <Container text>
@@ -36,9 +40,10 @@ export default observer(function HomePage() {
                             size='huge'
                             inverted
                             color='facebook'
-                            content='Login with Facebook'
-                            onClick={userStore.facebookLogin}
-                        />
+                            onClick={userStore.facebookLogin}>
+                                Login with Facebook
+                                <h5 style={{...expStyle}}>(experimental)</h5>
+                        </Button>
                     </>
                 )}
             </Container>
